@@ -1,0 +1,99 @@
+---
+title: 'Case Study'
+date: '08.04.2020'
+author:
+- 
+  name: Ljiljana Đuretanović
+output: 
+  html_document:
+    theme: "flatly"
+    toc: true
+    toc_float: true
+    code_download: true
+    df_print: kable
+params:
+  data: "data/athlete_events.csv"
+---  
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r include=FALSE}
+library(here) # for file paths
+library(tidyverse) # for all else
+theme_set(theme_minimal())
+```
+
+## Zadatak 1.
+```{r}
+olympic <- read.csv("data/athlete_events.csv")
+glimpse(olympic)
+```
+
+## Zadatak 2.
+
+```{r}
+ mydata <- select(olympic, starts_with("s") & ends_with("t"))
+head(mydata, n=5)
+```
+
+## Zadatak 3
+
+```{r}
+olympic <- mutate(olympic, BMI = Weight / (Height/100)^2) 
+head(olympic, n = 5)
+```
+
+## Zadatak 4.
+
+```{r}
+olympicSR <- filter(olympic, Team=="Serbia")
+head(olympicSR, n = 5)
+```
+
+```{r}
+olympicSR21c <- filter(olympicSR, Year>=2000 & Height>200 & Weight>100)
+head(olympicSR21c, n = 5)
+```
+
+##  Zadatak 5.
+
+```{r}
+arrange(olympicSR21c, Height)
+arrange(olympicSR21c, desc(Height))
+```
+## Zadatak 6.
+
+```{r}
+olympicSR <- arrange(olympicSR, Age)
+head(olympicSR, n=1)
+
+olympicSR <- arrange(olympicSR, desc(Height))
+head(olympicSR, n=1)
+```
+
+## Zadatak 7.
+
+```{r}
+summarise(olympicSR, max_Age = max(Age), max_BMI = max(BMI))
+
+summarise(olympicSR, mean_Age = mean(Age), mean_BMI = mean(BMI))
+```
+
+## Zadatak 8.
+
+```{r}
+Number_of_medals <- olympic %>% 
+  filter(!is.na(Medal)) %>% 
+    group_by(Team,NOC,Medal,Age) %>% 
+    summarise(Broj=n())
+Number_of_medals %>% 
+  DT::datatable()
+```
+
+```{r}
+
+ggplot(Number_of_medals,aes(x=Age,y=Broj))+
+  geom_point(col="Magenta")
+```
